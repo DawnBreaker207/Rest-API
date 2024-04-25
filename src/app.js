@@ -11,7 +11,9 @@ app.use(compression());
 // Init Middleware
 
 // Init Database
-
+import './dbs/init.mongodb.js';
+import { checkOverload } from './helpers/check.connect.js';
+checkOverload();
 // Init Router
 app.get('/', (req, res, next) => {
   return res.status(200).json({
