@@ -2,6 +2,9 @@
 
 - RSA
 - Crypto
+- Crypto modulusLength: 4096
+- Type pkcs1, pkcs2
+- Format pem
 - Singleton
 - mongoose.lean()
 - ```JavaScript
@@ -21,3 +24,4 @@
 - maxPoolSize
 - buffer
 - hash
+- JWT RS256 algorithm
