@@ -1,4 +1,4 @@
-import apiKeyModel from '../models/apiKey.model.js';
+// import apiKeyModel from '../models/apiKey.model.js';
 import crypto from 'crypto';
 export const findById = async (key) => {
   // const newKey = await apiKeyModel.create({
