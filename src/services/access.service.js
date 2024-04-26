@@ -1,10 +1,13 @@
-import shopModel from '../models/shop.model.js';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
-import KeyTokenService from './keyToken.service.js';
 import { createTokenPair } from '../auth/authUtils.js';
-import { token } from 'morgan';
+import {
+  BadRequestError,
+  ConflictRequestError,
+} from '../core/error.response.js';
+import shopModel from '../models/shop.model.js';
 import { getInfoData } from '../utils/index.js';
+import KeyTokenService from './keyToken.service.js';
 const RoleShop = {
   SHOP: 'SHOP',
   WRITER: 'WRITER',
@@ -17,10 +20,7 @@ class AccessService {
       // Step 1: Check email exist ?
       const holderShop = await shopModel.findOne({ email }).lean();
       if (holderShop) {
-        return {
-          code: 'xxxx',
-          message: 'Shop already registered',
-        };
+        throw new BadRequestError('Error: Shop already registered');
       }
 
       const passwordHash = bcrypt.hashSync(password, 10);
@@ -31,7 +31,7 @@ class AccessService {
         password: passwordHash,
         roles: [RoleShop.SHOP],
       });
-      console.log(newShop);
+      // console.log(newShop);
       if (newShop) {
         // Created privateKey , publicKey
         // // RSA
@@ -52,7 +52,7 @@ class AccessService {
         const privateKey = crypto.randomBytes(64).toString('hex');
         const publicKey = crypto.randomBytes(64).toString('hex');
 
-        console.log({ privateKey, publicKey }); //Save collection Keystore
+        // console.log({ privateKey, publicKey }); //Save collection Keystore
 
         const keyStore = await KeyTokenService.createKeyToken({
           userId: newShop._id,
@@ -61,6 +61,7 @@ class AccessService {
         });
 
         if (!keyStore) {
+          // throw new BadRequestError('Error: Shop already registered');
           return {
             code: 'xxxx',
             message: 'keyStore error',
@@ -92,11 +93,12 @@ class AccessService {
         metadata: null,
       };
     } catch (error) {
-      return {
-        code: 'xxx',
-        message: error.message,
-        status: 'error',
-      };
+      throw new BadRequestError(error.message);
+      // return {
+      //   code: 'xxx',
+      //   message: error.message,
+      //   status: 'error',
+      // };
     }
   };
 }
